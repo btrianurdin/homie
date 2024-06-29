@@ -14,15 +14,20 @@
   "dependencies": {
     "@nuxt/ui": "latest",
     "@sidebase/nuxt-auth": "^0.7.2",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.31.2",
     "next-auth": "4.21.1",
     "nuxt": "^3.12.2",
+    "postgres": "^3.4.4",
     "tailwind-merge": "^2.3.0",
-    "vue": "latest"
+    "vue": "latest",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@egoist/tailwindcss-icons": "^1.8.1",
     "@iconify-json/lucide": "^1.1.196",
     "@nuxt/eslint": "^0.3.13",
+    "drizzle-kit": "^0.22.7",
     "eslint": "^9.6.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",

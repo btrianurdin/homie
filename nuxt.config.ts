@@ -27,15 +27,12 @@ export default defineNuxtConfig({
       ],
     },
   },
-  imports: {
-    autoImport: false,
-  },
   auth: {
     baseURL: "http://localhost:3002",
     provider: {
       type: "authjs",
     },
-    globalAppMiddleware: true,
+    globalAppMiddleware: false,
   },
   colorMode: {
     preference: "light",
