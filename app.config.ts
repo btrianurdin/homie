@@ -1,6 +1,9 @@
 export default defineAppConfig({
   ui: {
     strategy: "merge",
+    notifications: {
+      position: "bottom-auto left-auto top-0 right-0",
+    },
     input: {
       color: {
         white: {
