@@ -1,0 +1,1 @@
+ALTER TABLE "rooms" ADD COLUMN "location_bbox" text NOT NULL;

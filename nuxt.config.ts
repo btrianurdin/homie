@@ -4,7 +4,12 @@ export default defineNuxtConfig({
     port: 3002,
   },
   devtools: { enabled: true },
-  modules: ["@nuxt/eslint", "@nuxt/ui", "@sidebase/nuxt-auth"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/ui",
+    "@sidebase/nuxt-auth",
+    "nuxt-tiptap-editor",
+  ],
   css: ["~/assets/css/global.css"],
   app: {
     head: {
@@ -33,6 +38,11 @@ export default defineNuxtConfig({
       type: "authjs",
     },
     globalAppMiddleware: false,
+  },
+  runtimeConfig: {
+    public: {
+      mapBoxApi: "",
+    },
   },
   colorMode: {
     preference: "light",
