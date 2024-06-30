@@ -69,6 +69,7 @@ import type { CreateRoomSchema } from "~/schema/create-room-schema";
 
 definePageMeta({
   layout: "owner",
+  middleware: ["auth-owner"],
 });
 
 const galleries = ref<{ id: string; url: string }[]>([]);

@@ -5,8 +5,13 @@
     >
       <h1 class="px-6">KosKosan</h1>
       <div class="px-6">
-        <UButton color="red" icon="i-heroicons-arrow-right-20-solid" trailing>
-          Logout
+        <UButton
+          color="red"
+          icon="i-heroicons-arrow-right-20-solid"
+          trailing
+          @click="logoutHandler"
+        >
+          Sign out
         </UButton>
       </div>
     </header>
@@ -81,5 +86,14 @@ const sidebarMenu = ref([
 const activeMenu = (path: string, isIndex: boolean) => {
   if (isIndex) return path === route.path;
   return route.path.startsWith(path);
+};
+
+const { signOut } = useAuth();
+
+const logoutHandler = () => {
+  signOut({
+    external: true,
+    redirect: true,
+  });
 };
 </script>

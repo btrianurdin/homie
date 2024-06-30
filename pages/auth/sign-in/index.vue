@@ -44,7 +44,9 @@
               placeholder="Masukkan password"
             />
           </UFormGroup>
-          <UButton type="submit" class="mt-1" block> Masuk </UButton>
+          <UButton type="submit" class="mt-1" block :loading="loading">
+            Masuk
+          </UButton>
         </UForm>
         <NuxtLink
           :to="`/auth/sign-up?mode=${stateMode}`"
@@ -61,6 +63,10 @@
 import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
 import cn from "~/utils/cn";
+
+definePageMeta({
+  middleware: ["unauthenticated"],
+});
 
 const route = useRoute();
 const router = useRouter();

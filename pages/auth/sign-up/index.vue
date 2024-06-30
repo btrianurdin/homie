@@ -73,6 +73,10 @@ import { z } from "zod";
 import type { FormSubmitEvent } from "#ui/types";
 import cn from "~/utils/cn";
 
+definePageMeta({
+  middleware: ["unauthenticated"],
+});
+
 const route = useRoute();
 const router = useRouter();
 const { signIn } = useAuth();

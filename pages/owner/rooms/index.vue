@@ -67,6 +67,7 @@ import { PricePeriodLabel, RoomTypeLabel } from "~/types";
 
 definePageMeta({
   layout: "owner",
+  middleware: ["auth-owner"],
 });
 
 const roomsQuery = await useLazyAsyncData("rooms", getRooms, {
