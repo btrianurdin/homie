@@ -3,8 +3,20 @@
     <div class="flex justify-between items-center w-full p-6 py-5 border-b">
       <h2 class="text-2xl font-semibold">Tambah Kos Baru</h2>
       <div class="flex gap-3">
-        <UButton to="/owner/rooms" variant="outline"> Cancel </UButton>
-        <UButton id="save-button" to="/owner/rooms/create"> Simpan </UButton>
+        <UButton
+          to="/owner/rooms"
+          variant="outline"
+          :disabled="createRoomHandler.loading.value"
+        >
+          Cancel
+        </UButton>
+        <UButton
+          id="save-button"
+          to="/owner/rooms/create"
+          :loading="createRoomHandler.loading.value"
+        >
+          Simpan
+        </UButton>
       </div>
     </div>
     <div class="h-full p-6 flex gap-10 overflow-auto">
