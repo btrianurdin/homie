@@ -1,5 +1,5 @@
 import { getServerSession } from "#auth";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import db from "~/server/database";
 import { rooms } from "~/server/database/schema";
 import HttpResponse from "~/server/exceptions/api-response";
@@ -26,6 +26,7 @@ export default defineEventHandler(async (e) => {
         },
       },
       where: eq(rooms.ownerId, session.user?.id!),
+      orderBy: [desc(rooms.created_at)],
     });
 
     return HttpResponse.success(e, "Rooms retrieved successfully", data);

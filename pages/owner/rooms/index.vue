@@ -8,7 +8,7 @@
         Tambah Kos
       </UButton>
     </div>
-    <div class="h-full flex-grow grid grid-cols-3 gap-3 p-6 overflow-auto">
+    <div class="h-full flex-grow grid grid-cols-3 items-start gap-3 p-6 overflow-auto">
       <UCard
         v-for="room in roomsQuery.data.value?.payload"
         :key="room.id"

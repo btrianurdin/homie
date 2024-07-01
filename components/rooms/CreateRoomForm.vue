@@ -125,7 +125,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import type { SearchPointResponse } from "~/types";
 import type { FormSubmitEvent } from "#ui/types";
-import { z } from "zod";
 import createRoomSchema, {
   type CreateRoomSchema,
 } from "~/schema/create-room-schema";
@@ -213,7 +212,8 @@ watch(
       searchLocationLoading.value = false;
       formState.address = location.value?.payload?.full_address || "";
       locationBbox.value = location.value?.payload?.bbox || [];
-      formRef.value?.validate();
+      console.log(formRef.value);
+      formRef.value?.validate('address');
     }
   },
   {
