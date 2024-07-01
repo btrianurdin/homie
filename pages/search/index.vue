@@ -53,6 +53,7 @@
       :coordinates="searchParams.coordinates"
       :bbox="searchParams.bbox"
       @clusterUpdate="clusterUpdateHandler"
+      @clusterClick="clusterUpdateHandler"
     />
   </div>
 </template>
@@ -81,10 +82,12 @@ const searchParams = computed(() => {
 const clusterUpdateHandler = async (data: {
   bounds: number[][];
   zoom: number;
+  cluster_id?: string;
 }) => {
   const res = await getRoomLists({
     bounds: data.bounds,
     zoom: data.zoom,
+    cluster_id: data.cluster_id,
   });
 
   roomLists.value = res.payload?.rooms || [];

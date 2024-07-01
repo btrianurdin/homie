@@ -52,7 +52,7 @@
           ref="inputFileRef"
           type="file"
           class="sr-only"
-          accept="image/jpg, image/jpeg, image/png"
+          accept="image/jpg, image/jpeg, image/png, image/webp"
           @change="fileChangedHandler"
         />
       </div>

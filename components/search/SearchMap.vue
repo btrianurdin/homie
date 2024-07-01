@@ -15,13 +15,17 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: "clusterUpdate", data: { bounds: number[][]; zoom: number }): void;
+  (
+    e: "clusterUpdate" | "clusterClick",
+    data: { bounds: number[][]; zoom: number; cluster_id?: string },
+  ): void;
 }>();
 
 const config = useRuntimeConfig();
 mapboxgl.accessToken = config.public.mapBoxApi;
 
 const map = ref<mapboxgl.Map | null>(null);
+const activeClusterId = ref<string | null>(null);
 
 const createMap = (coordinates: number[]) => {
   map.value = new mapboxgl.Map({
@@ -43,6 +47,7 @@ const createMap = (coordinates: number[]) => {
 const updateCluster = async () => {
   const bounds = map.value?.getBounds();
   const zoom = map.value?.getZoom();
+
   emits("clusterUpdate", {
     bounds: bounds?.toArray()!,
     zoom: zoom!,
@@ -60,18 +65,42 @@ const updateCluster = async () => {
     const el = document.createElement("div");
     el.className = "marker";
     if (cluster.is_cluster) {
+      el.id = cluster.cluster_id!;
       el.className += " marker-cluster";
       el.innerHTML = `<span>${cluster.point_count}</span>`;
     } else {
       el.className += " marker-single";
       el.innerHTML = `<span>${rupiahReadable(cluster.price!)}</span>`;
     }
+    el.addEventListener("click", () => {
+      activeClusterId.value = null;
+      emits("clusterClick", {
+        bounds: bounds?.toArray()!,
+        zoom: zoom!,
+        cluster_id: cluster.cluster_id!,
+      });
+      if (cluster.is_cluster) {
+        activeClusterId.value = cluster.cluster_id!;
+      }
+    });
 
     new mapboxgl.Marker(el)
       .setLngLat([cluster.coordinates[0], cluster.coordinates[1]])
       .addTo(map.value!);
   }
 };
+
+watch(activeClusterId, (id) => {
+  if (id) {
+    const cluster = document.getElementById(id);
+    if (cluster) {
+      document
+        .querySelectorAll(".marker-cluster")
+        .forEach((cluster) => cluster.classList.remove("active"));
+      cluster.classList.add("active");
+    }
+  }
+});
 
 onMounted(() => {
   if (props.type === "place") {
@@ -99,9 +128,12 @@ watch(
 </script>
 <style lang="postcss">
 .marker.marker-cluster {
-  @apply bg-blue-600 w-8 h-8 rounded-full text-xs flex items-center justify-center text-white font-semibold;
+  @apply bg-white w-8 h-8 rounded-full text-xs flex items-center justify-center text-black border border-gray-400 font-semibold cursor-pointer;
+}
+.marker.marker-cluster.active {
+  @apply bg-blue-600 text-white border-blue-500;
 }
 .marker.marker-single {
-  @apply bg-blue-600 px-2 py-1 text-xs rounded-full flex items-center justify-center text-white;
+  @apply bg-white px-2 py-1 text-xs rounded-full flex items-center justify-center text-black border border-gray-400;
 }
 </style>

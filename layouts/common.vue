@@ -4,7 +4,7 @@
       class="sticky top-0 z-50 px-6 py-4 bg-white border-b flex items-center w-full"
     >
       <NuxtLink to="/">
-        <h1 class="text-xl font-semibold">KosKosan</h1>
+        <h1 class="text-xl font-semibold">Homie</h1>
       </NuxtLink>
       <div class="relative ml-16 flex items-center justify-between w-full">
         <div class="w-1/2 xl:w-1/3">

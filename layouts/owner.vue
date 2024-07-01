@@ -3,7 +3,7 @@
     <header
       class="w-full bg-white border-b flex items-center justify-between h-14 flex-shrink-0"
     >
-      <h1 class="px-6">KosKosan</h1>
+      <h1 class="px-6">Homie</h1>
       <div class="px-6">
         <UButton
           color="red"

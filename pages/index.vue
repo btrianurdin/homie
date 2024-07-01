@@ -24,10 +24,11 @@
         <SvgTownVector class="w-1/3 flex-shrink-0 relative z-0" />
       </div>
     </div>
-    <div class="border-t h-screen">
+    <div class="border-t">
       <div class="max-w-4xl mx-auto py-10 px-3 lg:px-0">
         <div class="mb-10">
-          <h2 class="text-xl font-semibold mb-3">Cari berdasarkan kota</h2>
+          <h2 class="text-xl font-semibold">Cari berdasarkan kota</h2>
+          <p class="mb-3">Pilih kota yang ingin kamu cari kos-kosannya.</p>
           <div>
             <UCarousel
               v-slot="{ item }"
@@ -53,17 +54,70 @@
           </div>
         </div>
         <div>
-          <h2 class="text-xl font-semibold mb-3">Rekomendasi</h2>
+          <h2 class="text-xl font-semibold">Rekomendasi</h2>
+          <p class="mb-3">Temukan kos-kosan yang nyaman dan terjangkau di sekitar kamu.</p>
+          <div class="grid grid-cols-3 gap-6">
+            <UCard
+              v-for="room in recommendationLists.data.value?.payload"
+              :key="room.id"
+              :ui="{
+                base: '',
+                header: { padding: '!p-0' },
+                body: { padding: '!p-4' },
+                footer: { padding: '!p-4' },
+              }"
+            >
+              <template #header>
+                <img
+                  :src="room.galleries[0].image"
+                  class="w-full h-[200px] object-cover object-center rounded-t-md"
+                />
+              </template>
+              <div class="h-14 flex items-center mb-2">
+                <h3 class="text-lg font-medium two-lines">
+                  {{ room.title }}
+                </h3>
+              </div>
+              <div>
+                <div class="flex justify-between mb-3">
+                  <div class="py-1 px-3 text-sm rounded-md bg-gray-200">
+                    {{ RoomTypeLabel[room.type] }}
+                  </div>
+                  <div>
+                    <span class="text-lg font-semibold">{{
+                      currency(room.price)
+                    }}</span>
+                    <span class="text-sm text-gray-500"
+                      >/ {{ PricePeriodLabel[room.pricePeriod] }}</span
+                    >
+                  </div>
+                </div>
+                <p class="text-sm text-gray-500">{{ room.address }}</p>
+              </div>
+            </UCard>
+          </div>
         </div>
       </div>
+    </div>
+    <div class="text-center pb-20 pt-10 border-t">
+      <p class="mb-2">Homie - Cari Kosan Secepat Kilat</p>
+      <p>
+        &copy; 2024 Homie. All rights reserved.
+      </p>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import cityLists from "~/data/city-lists";
+import getRecommendations from "~/repositories/public/room/get-recommendations";
+import { PricePeriodLabel, RoomTypeLabel } from "~/types";
 
 definePageMeta({
   layout: "common",
+});
+
+const recommendationLists = await useLazyAsyncData(() => getRecommendations(), {
+  server: false,
 });
 
 const actionClickHandler = () => {

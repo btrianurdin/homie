@@ -19,7 +19,7 @@ export type LocationSuggestResponse = {
 
 export type ClusterResponse = {
   clusters: {
-    cluster_id?: number;
+    cluster_id?: string;
     is_cluster?: boolean;
     point_count: number;
     coordinates: number[];
