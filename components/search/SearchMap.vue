@@ -1,10 +1,49 @@
 <template>
-  <div class="h-full w-1/2">
-    <div id="map" class="h-full" />
+  <div class="relative h-full w-1/2">
+    <div
+      :class="
+        cn(
+          'absolute top-5 left-1/2 -translate-x-1/2 z-40 -translate-y-20 transition-transform duration-300',
+          loading.clusters && '!translate-y-0',
+        )
+      "
+    >
+      <button
+        class="flex items-center gap-1 bg-white px-3 py-2 rounded-full shadow-lg"
+      >
+        <UIcon name="i-lucide-loader" class="animate-spin" />
+        Loading...
+      </button>
+    </div>
+    <div
+      :class="
+        cn(
+          'absolute top-5 left-1/2 -translate-x-1/2 z-40 -translate-y-20 transition-transform duration-300',
+          needToUpdate && 'translate-y-0',
+        )
+      "
+    >
+      <button
+        class="bg-white px-3 py-2 rounded-full shadow-lg flex items-center gap-1"
+        @click="updateCluster"
+      >
+        <UIcon name="i-heroicons-magnifying-glass" />
+        Cari di area ini
+      </button>
+    </div>
+    <div
+      v-if="loading.map"
+      class="h-full w-full flex flex-col items-center justify-center"
+    >
+      <span>Preparing map...</span>
+    </div>
+    <div class="relative w-full h-full">
+      <div id="map" class="h-full" />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { type MapboxOptions } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import getClusters from "~/repositories/public/room/get-clusters";
 
@@ -24,27 +63,53 @@ const emits = defineEmits<{
 const config = useRuntimeConfig();
 mapboxgl.accessToken = config.public.mapBoxApi;
 
+const loading = reactive({
+  map: false,
+  clusters: false,
+});
+const needToUpdate = ref(false);
+const isZoomMode = ref(false);
 const map = ref<mapboxgl.Map | null>(null);
 const activeClusterId = ref<string | null>(null);
 
-const createMap = (coordinates: number[]) => {
-  map.value = new mapboxgl.Map({
+const createMap = (coordinates: number[], bounds?: number[], zoom?: number) => {
+  const opts: MapboxOptions = {
     container: "map",
     style: "mapbox://styles/mapbox/streets-v11",
     center: [coordinates[0], coordinates[1]],
-    zoom: 9,
+    zoom: zoom || 9,
     maxZoom: 15,
-    minZoom: 6,
-    bounds: [
-      [props.bbox[0], props.bbox[1]],
-      [props.bbox[2], props.bbox[3]],
-    ],
-  });
+    minZoom: 13,
+  };
 
-  map.value.on("zoomend", async () => updateCluster());
+  if (bounds) {
+    opts.bounds = [
+      [bounds[0], bounds[1]],
+      [bounds[2], bounds[3]],
+    ];
+  }
+
+  map.value = new mapboxgl.Map(opts);
+  map.value.on("style.load", async () => {
+    loading.map = false;
+    updateCluster();
+  });
+  map.value.on("zoomend", () => {
+    isZoomMode.value = true;
+    updateCluster();
+  });
+  map.value.on("moveend", () => {
+    if (isZoomMode.value) {
+      isZoomMode.value = false;
+      return;
+    }
+    needToUpdate.value = true;
+  });
 };
 
 const updateCluster = async () => {
+  needToUpdate.value = false;
+  loading.clusters = true;
   const bounds = map.value?.getBounds();
   const zoom = map.value?.getZoom();
 
@@ -57,6 +122,7 @@ const updateCluster = async () => {
     bounds: bounds?.toArray()!,
     zoom: zoom!,
   });
+  loading.clusters = false;
 
   if (!clusters.payload?.clusters) return;
   document.querySelectorAll(".marker").forEach((marker) => marker.remove());
@@ -103,10 +169,19 @@ watch(activeClusterId, (id) => {
 });
 
 onMounted(() => {
+  loading.map = true;
   if (props.type === "place") {
-    createMap(props.coordinates);
+    createMap(props.coordinates, props.bbox);
   }
-  updateCluster();
+  if (props.type === "nearest") {
+    navigator.geolocation.getCurrentPosition((position) => {
+      createMap(
+        [position.coords.longitude, position.coords.latitude],
+        undefined,
+        13,
+      );
+    });
+  }
 });
 
 watch(
@@ -131,9 +206,16 @@ watch(
   @apply bg-white w-8 h-8 rounded-full text-xs flex items-center justify-center text-black border border-gray-400 font-semibold cursor-pointer;
 }
 .marker.marker-cluster.active {
-  @apply bg-blue-600 text-white border-blue-500;
+  @apply bg-black text-white border-black;
 }
 .marker.marker-single {
-  @apply bg-white px-2 py-1 text-xs rounded-full flex items-center justify-center text-black border border-gray-400;
+  @apply bg-white px-2 py-1 pl-[22px] text-xs rounded-full flex items-center justify-center text-black border border-gray-400;
+}
+.marker.marker-single {
+  content: "";
+  background-image: url("/assets/images/svg/house-icon.svg");
+  background-size: 15px 15px;
+  background-repeat: no-repeat;
+  background-position: 5px 3.5px;
 }
 </style>

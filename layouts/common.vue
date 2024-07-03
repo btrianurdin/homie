@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-col min-h-screen">
     <header
-      class="sticky top-0 z-50 px-6 py-4 bg-white border-b flex items-center w-full"
+      class="sticky h-16 top-0 z-50 px-6 py-4 bg-white border-b flex items-center w-full"
     >
       <NuxtLink to="/">
         <h1 class="text-xl font-semibold">Homie</h1>
@@ -23,6 +23,7 @@
               <div v-if="suggestions === null">
                 <button
                   class="flex items-center p-2 bg-gray-50 rounded-md transition-colors hover:bg-gray-100 w-full mb-3"
+                  @click="nearestSearchHandler"
                 >
                   <UIcon name="i-heroicons-map-pin" class="w-5 h-5 mr-1" />
                   <p class="font-medium">Cari lokasi sekitar</p>
@@ -68,13 +69,39 @@
             </div>
           </div>
         </div>
-        <div class="flex gap-3">
+        <div v-if="status === 'unauthenticated'" class="flex gap-3">
           <NuxtLink to="/auth/sign-up">
             <UButton variant="outline">Daftar</UButton>
           </NuxtLink>
           <NuxtLink to="/auth/sign-in">
             <UButton>Masuk</UButton>
           </NuxtLink>
+        </div>
+        <div v-else>
+          <UDropdown
+            :items="[
+              [
+                {
+                  label: 'Profile',
+                  to: '/profile',
+                },
+              ],
+              [
+                {
+                  label: 'Sign Out',
+                  click: () => signOut({ callbackUrl: '/' }),
+                  class: 'text-red-500',
+                },
+              ],
+            ]"
+            :popper="{ placement: 'bottom-start' }"
+          >
+            <button
+              class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center"
+            >
+              {{ profileLetter }}
+            </button>
+          </UDropdown>
         </div>
       </div>
     </header>
@@ -92,10 +119,18 @@ import locationSuggest from "~/repositories/public/location/location-suggest";
 import type { LocationSuggestResponse } from "~/types";
 
 const router = useRouter();
-
+const { data, status, signOut } = useAuth();
 const search = ref("");
 const searchBoxOpen = ref(false);
 const suggestions = ref<LocationSuggestResponse[] | null>(null);
+
+const profileLetter = computed(() => {
+  const name = data.value?.user?.name;
+  if (name) {
+    return name[0].toUpperCase();
+  }
+  return "?";
+});
 
 const openSearchBox = () => {
   const searchInput = document.getElementById(
@@ -123,6 +158,18 @@ const openSearchBox = () => {
 onMounted(() => {
   openSearchBox();
 });
+
+const nearestSearchHandler = () => {
+  const data = {
+    type: "nearest",
+  };
+
+  searchBoxOpen.value = false;
+  router.push({
+    name: "search",
+    query: { q: btoa(JSON.stringify(data)) },
+  });
+};
 
 const suggestionClickHandler = (location: LocationSuggestResponse) => {
   const data = {
