@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   css: ["~/assets/css/global.css"],
   app: {
     head: {
-      title: "Homie - Cari Kosan Secepat Kilat",
+      title: "Homie - Cari kos idaman dan pasti aman.",
       titleTemplate: "%s - Homie",
       link: [
         {
