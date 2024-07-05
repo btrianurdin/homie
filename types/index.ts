@@ -43,6 +43,15 @@ export type RoomListResponse = {
   total: number;
 };
 
+export type RoomDetailResponse = GetRoom & {
+  owner: {
+    name: string;
+    phone: string;
+    picture: string;
+    created_at: string;
+  };
+};
+
 export type InsertRoom = typeof rooms.$inferInsert;
 export type GetGallery = typeof galleries.$inferSelect;
 export type GetRoom = typeof rooms.$inferSelect & {
@@ -50,14 +59,31 @@ export type GetRoom = typeof rooms.$inferSelect & {
 };
 
 export const RoomTypeLabel = {
-  men: "Pria",
+  men: "Putra",
   women: "Putri",
   all: "Campur",
 } as const;
+
+export type PeriodType = "month" | "3months" | "6months" | "year";
+export type PeriodCasting<T> = Record<PeriodType, T>;
 
 export const PricePeriodLabel = {
   month: "Bulan",
   "3months": "3 Bulan",
   "6months": "6 Bulan",
   year: "Tahun",
-};
+} as PeriodCasting<string>;
+
+export const AllowPeriodLabel = {
+  month: "1 Bulan",
+  "3months": "3 Bulan",
+  "6months": "6 Bulan",
+  year: "1 Tahun",
+} as PeriodCasting<string>;
+
+export const PeriodInNumber = {
+  month: 1,
+  "3months": 3,
+  "6months": 6,
+  year: 12,
+} as PeriodCasting<number>;

@@ -55,7 +55,9 @@
         </div>
         <div>
           <h2 class="text-xl font-semibold">Rekomendasi</h2>
-          <p class="mb-3">Temukan kos-kosan yang nyaman dan terjangkau di sekitar kamu.</p>
+          <p class="mb-3">
+            Temukan kos-kosan yang nyaman dan terjangkau di sekitar kamu.
+          </p>
           <div class="grid grid-cols-3 gap-6">
             <UCard
               v-for="room in recommendationLists.data.value?.payload"
@@ -99,15 +101,11 @@
         </div>
       </div>
     </div>
-    <div class="text-center pb-20 pt-10 border-t">
-      <p class="mb-2">Homie - Cari Kosan Secepat Kilat</p>
-      <p>
-        &copy; 2024 Homie. All rights reserved.
-      </p>
-    </div>
+    <Footer />
   </div>
 </template>
 <script setup lang="ts">
+import Footer from "~/components/shared/Footer.vue";
 import cityLists from "~/data/city-lists";
 import getRecommendations from "~/repositories/public/room/get-recommendations";
 import { PricePeriodLabel, RoomTypeLabel } from "~/types";

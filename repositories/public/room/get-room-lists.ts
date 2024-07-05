@@ -5,7 +5,7 @@ const getRoomLists = async (params: {
   zoom: number;
   cluster_id?: string;
 }) => {
-  const res = await $fetch("/api/public/room-lists", {
+  const res = await $fetch("/api/public/rooms/lists", {
     method: "POST",
     body: JSON.stringify({
       bounds: {

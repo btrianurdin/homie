@@ -1,7 +1,7 @@
 import type { ClusterResponse, HttpResponse } from "~/types";
 
 const getClusters = async (params: { bounds: number[][]; zoom: number }) => {
-  const res = await $fetch("/api/public/room-clusters", {
+  const res = await $fetch("/api/public/rooms/clusters", {
     method: "POST",
     body: JSON.stringify({
       bounds: {

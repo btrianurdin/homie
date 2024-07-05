@@ -1,7 +1,7 @@
 import type { HttpResponse, LocationSuggestResponse } from "~/types";
 
 const locationSuggest = async (keyword: string) => {
-  const res = await $fetch("/api/public/location-suggest", {
+  const res = await $fetch("/api/public/locations/suggest", {
     params: {
       keyword,
     },

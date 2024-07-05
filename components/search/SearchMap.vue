@@ -49,8 +49,8 @@ import getClusters from "~/repositories/public/room/get-clusters";
 
 const props = defineProps<{
   type: "place" | "nearest";
-  coordinates: number[];
-  bbox: number[];
+  coordinates?: number[];
+  bbox?: number[];
 }>();
 
 const emits = defineEmits<{
@@ -171,7 +171,7 @@ watch(activeClusterId, (id) => {
 onMounted(() => {
   loading.map = true;
   if (props.type === "place") {
-    createMap(props.coordinates, props.bbox);
+    createMap(props.coordinates!, props.bbox);
   }
   if (props.type === "nearest") {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -185,9 +185,10 @@ onMounted(() => {
 });
 
 watch(
-  () => props.bbox,
+  () => props?.bbox,
   (bbox) => {
-    if (map.value) {
+    console.log(bbox);
+    if (map.value && bbox) {
       map.value.fitBounds(
         [
           [bbox[0], bbox[1]],
