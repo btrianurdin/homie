@@ -1,4 +1,5 @@
 import type { Notification } from "#ui/types/notification";
+import ErrorModal from "~/components/shared/ErrorModal.vue";
 
 export interface IAlertToast {
   title?: string;
@@ -8,6 +9,7 @@ export interface IAlertToast {
 
 const useAlert = () => {
   const toast = useToast();
+  const modal = useModal();
 
   return {
     toastError: ({ title, message, opts }: IAlertToast) => {
@@ -24,6 +26,17 @@ const useAlert = () => {
         description: message,
         color: "green",
         ...opts,
+      });
+    },
+    error: ({
+      title,
+      message,
+      withButton,
+    }: IAlertToast & { withButton?: boolean }) => {
+      modal.open(ErrorModal, {
+        title: title ?? "Opps!...",
+        message,
+        withButton,
       });
     },
   };
