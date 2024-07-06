@@ -2,31 +2,45 @@ import { z } from "zod";
 
 const schema = z.object({
   title: z
-    .string({ message: "Nama kos tidak boleh kosong" })
-    .min(5, { message: "Judul minimal 5 karakter" }),
-  description: z.string({ message: "Deskripsi tidak boleh kosong" }).min(10, {
-    message: "Deskripsi minimal 10 karakter",
+    .string({ message: "Kolom tidak boleh kosong" })
+    .min(5, { message: "Minimal 5 karakter" }),
+  description: z.string({ message: "Kolom tidak boleh kosong" }).min(10, {
+    message: "Minimal 10 karakter",
   }),
   price: z
-    .string({ message: "Harga tidak boleh kosong" })
-    .regex(/^\d+$/, { message: "Harga harus berupa angka" }),
-  price_period: z.enum(["month", "3months", "6months", "year"], {
-    message: "Periode harga tidak valid",
-  }),
+    .string({ message: "Kolom tidak boleh kosong" })
+    .transform((val, ctx) => {
+      const parse = val.replace(/\./g, "").match(/\D/g);
+      if (parse) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Format harga tidak valid",
+        });
+        return z.NEVER;
+      }
+      if (val.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Kolom tidak boleh kosong",
+        });
+        return z.NEVER;
+      }
+      return val.replace(/\D/g, "");
+    }),
   period: z.array(z.enum(["month", "3months", "6months", "year"])).min(1, {
-    message: "Pilih minimal satu periode sewa",
+    message: "Pilih minimal satu",
   }),
   type: z.enum(["men", "women", "all"], {
-    message: "Tipe kos tidak boleh kosong",
+    message: "Kolom tidak boleh kosong",
   }),
   total_rooms: z
-    .string({ message: "Jumlah kamar tidak boleh kosong" })
-    .regex(/^\d+$/, { message: "Jumlah kamar harus berupa angka" }),
+    .string({ message: "Kolom tidak boleh kosong" })
+    .regex(/^\d+$/, { message: "Harus berupa angka" }),
   slots: z
-    .string({ message: "Jumlah kamar tersedia tidak boleh kosong" })
-    .regex(/^\d+$/, { message: "Jumlah kamar tersedia harus berupa angka" }),
-  address: z.string({ message: "Alamat tidak boleh kosong" }).min(5, {
-    message: "Alamat minimal 5 karakter",
+    .string({ message: "Kolom tidak boleh kosong" })
+    .regex(/^\d+$/, { message: "Harus berupa angka" }),
+  address: z.string({ message: "Kolom tidak boleh kosong" }).min(5, {
+    message: "Minimal 5 karakter",
   }),
 });
 

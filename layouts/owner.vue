@@ -15,7 +15,7 @@
         </UButton>
       </div>
     </header>
-    <div class="flex-grow h-full flex overflow-hidden">
+    <div class="flex-grow h-full w-full flex overflow-hidden">
       <div
         class="w-[260px] flex-shrink-0 border-r flex flex-col gap-4 bg-white p-6"
       >
@@ -60,7 +60,7 @@
           </NuxtLink>
         </template>
       </div>
-      <div class="relative w-full">
+      <div class="relative w-full h-full">
         <slot />
       </div>
     </div>

@@ -18,7 +18,6 @@ export default defineEventHandler(async (e) => {
       title: body.title as string,
       description: description,
       price: body.price,
-      pricePeriod: body.price_period,
       address: body.address as string,
       allowBookPeriod: body.period?.join(","),
       latitude: body.point?.lat,
@@ -48,17 +47,3 @@ export default defineEventHandler(async (e) => {
     return HttpResponse.serverError(e, "Internal server error");
   }
 });
-
-// description: body.description as string,
-// price: body.price,
-// pricePeriod: body.pricePeriod?.join(","),
-// location: body.location,
-// images: body.images,
-// ownerId: session.user?.id,
-// locationPoint: `${body.locationPoint[0]},${body.locationPoint[1]}`,
-// locationBbox: body.bbox?.join(","),
-// type: body.type,
-// roomsTotal: body.total_rooms,
-// roomsAvailable: body.slots,
-// allowBookPeriod: body.period?.join(","),
-// address: body.address as string,

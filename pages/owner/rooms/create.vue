@@ -19,52 +19,23 @@
         </UButton>
       </div>
     </div>
-    <div class="h-full p-6 flex gap-10 overflow-auto">
-      <div class="w-2/5 flex flex-col gap-4">
-        <div
-          v-for="gallery in galleries"
-          :key="gallery.id"
-          class="rounded-md overflow-hidden"
-        >
-          <img :src="gallery.url" class="w-full h-[200px] object-cover" />
-        </div>
-        <p v-if="galleryError" class="text-sm text-red-600 my-2">
-          {{ galleryError }}
-        </p>
-        <button @click="addImageHandler" class="w-full">
-          <UCard class="hover:bg-gray-50 hover:cursor-pointer">
-            <div class="flex items-center gap-1 justify-center">
-              <UIcon
-                v-if="!uploadMutation.loading.value"
-                name="i-heroicons-plus"
-                class="w-5 h-5"
-              />
-              <UIcon
-                v-else="uploadMutation.loading.value"
-                name="i-lucide-loader"
-                class="w-5 h-5 animate-spin"
-              />
-              Tambah Gambar
-            </div>
-          </UCard>
-        </button>
-        <input
-          ref="inputFileRef"
-          type="file"
-          class="sr-only"
-          accept="image/jpg, image/jpeg, image/png, image/webp"
-          @change="fileChangedHandler"
-        />
-      </div>
+    <div
+      class="h-full w-full grid grid-cols-[40%_60%] p-6 pr-10 gap-5 overflow-x-hidden"
+    >
+      <GalleryUpload
+        :galleries="galleries"
+        @gallery-added="galleryAddedHandler"
+        @gallery-removed="galleryRemovedHandler"
+      />
       <CreateRoomForm @submit="submitHandler" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import CreateRoomForm from "~/components/rooms/CreateRoomForm.vue";
+import GalleryUpload from "~/components/rooms/GalleryUpload.vue";
 import useMutation from "~/composables/use-mutation";
 import createRoom from "~/repositories/room/create-room";
-import uploadGallery from "~/repositories/room/upload-gallery";
 import type { CreateRoomSchema } from "~/schema/create-room-schema";
 
 definePageMeta({
@@ -72,39 +43,27 @@ definePageMeta({
   middleware: ["auth-owner"],
 });
 
-const galleries = ref<{ id: string; url: string }[]>([]);
-const galleryError = ref<string | null>(null);
-const inputFileRef = ref<HTMLInputElement | null>(null);
-
-const addImageHandler = () => {
-  if (uploadMutation.loading.value) return;
-  if (inputFileRef.value) inputFileRef.value.click();
-};
-
-const uploadMutation = useMutation(uploadGallery);
-
-const fileChangedHandler = (e: Event) => {
-  const { files } = e.target as HTMLInputElement;
-  if (files?.[0]) {
-    uploadMutation.mutate(files[0], {
-      onSuccess: (data) => {
-        galleryError.value = null;
-        galleries.value.unshift({
-          id: data.payload?.id!,
-          url: data.payload?.url!,
-        });
-      },
-    });
-  }
-};
-
 const router = useRouter();
 const alert = useAlert();
+
+const galleries = ref<{ id: string; url: string }[]>([]);
+
+const galleryAddedHandler = (data: { id: string; url: string }) => {
+  galleries.value.unshift(data);
+};
+
+const galleryRemovedHandler = (data: { id: string; url: string }) => {
+  galleries.value = galleries.value.filter((gallery) => gallery.id !== data.id);
+};
+
 const createRoomHandler = useMutation(createRoom);
 
 const submitHandler = (data: CreateRoomSchema) => {
-  if (galleries.value.length === 0) {
-    galleryError.value = "Gambar kos wajib diisi";
+  if (galleries.value.length < 4) {
+    alert.error({
+      title: "Gagal",
+      message: "Silahkan tambahkan minimal 4 gambar",
+    });
     return;
   }
 
