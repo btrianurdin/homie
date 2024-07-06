@@ -51,9 +51,6 @@ export const rooms = pgTable("rooms", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   price: decimal("price").notNull(),
-  pricePeriod: text("price_period", {
-    enum: ["month", "3months", "6months", "year"],
-  }).notNull(),
   rating: char("rating", { length: 5 }),
   address: text("address").notNull(),
   longitude: text("longitude").notNull(),
