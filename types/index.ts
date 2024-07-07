@@ -52,6 +52,18 @@ export type RoomDetailResponse = GetRoom & {
   };
 };
 
+export type FacilitiesResponse = {
+  id: string;
+  code: Capitalize<string>;
+  title: string;
+};
+
+export type NearestAccessResponse = {
+  id: string;
+  code: Capitalize<string>;
+  title: string;
+};
+
 export type InsertRoom = typeof rooms.$inferInsert;
 export type GetGallery = typeof galleries.$inferSelect;
 export type GetRoom = typeof rooms.$inferSelect & {

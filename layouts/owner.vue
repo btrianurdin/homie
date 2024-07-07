@@ -17,7 +17,7 @@
     </header>
     <div class="flex-grow h-full w-full flex overflow-hidden">
       <div
-        class="w-[260px] flex-shrink-0 border-r flex flex-col gap-4 bg-white p-6"
+        class="w-[260px] z-40 flex-shrink-0 border-r flex flex-col gap-4 bg-white p-6"
       >
         <NuxtLink
           to="/owmer/account"

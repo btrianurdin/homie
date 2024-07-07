@@ -2,6 +2,8 @@ import type { CreateRoomSchema } from "~/schema/create-room-schema";
 
 type CreateRoomParams = CreateRoomSchema & {
   galleries: string[];
+  facilities: string[];
+  nearestAccess: string[];
 };
 
 const createRoom = async (params: CreateRoomParams) => {

@@ -1,5 +1,5 @@
 <template>
-  <UModal :ui="{ base: 'sm:!max-w-4xl w-full h-[500px] overflow-y-hidden' }">
+  <UModal :ui="{ base: 'sm:!max-w-5xl w-full h-[500px]' }">
     <div class="flex h-full">
       <div class="flex-shrink-0 flex flex-col p-4 w-[40%]">
         <p class="text-lg font-medium mb-4">Galeri</p>

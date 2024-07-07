@@ -4,6 +4,7 @@
     :schema="createRoomSchema"
     :state="formState"
     class="flex flex-col gap-3"
+    @error="(error) => emits('errorForm', error?.errors)"
     @submit="handleSubmit"
   >
     <UFormGroup label="Nama Kos" name="title" class="w-full">
@@ -127,6 +128,7 @@ const config = useRuntimeConfig();
 const emits = defineEmits<{
   (e: "submitClick"): void;
   (e: "submit", data: CreateRoomSchema): void;
+  (e: "errorForm", error: any[]): void;
 }>();
 
 const editor = useEditor({
@@ -153,7 +155,7 @@ const formState = reactive({
   title: "",
   description: "",
   price: "",
-  price_period: "month",
+  price_period: "",
   period: [],
   type: "",
   total_rooms: "",
@@ -162,14 +164,13 @@ const formState = reactive({
 });
 
 const priceFormat = computed({
-  get: () => formState.price,
-  set: (value) => {
-    // console.log(value.replace(/\D/g, ""));
-    const formatCurrency = String(value)
+  get: () => {
+    return formState.price
       .replace(/\./g, "")
       .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-    formState.price = formatCurrency;
+  },
+  set: (value) => {
+    formState.price = value.replace(/\./g, "");
   },
 });
 
@@ -215,7 +216,6 @@ watch(
       searchLocationLoading.value = false;
       formState.address = location.value?.payload?.full_address || "";
       locationBbox.value = location.value?.payload?.bbox || [];
-      console.log(formRef.value);
       formRef.value?.validate("address");
     }
   },
@@ -285,14 +285,13 @@ onUnmounted(() => {
   map.value?.remove();
 });
 
-const toast = useToast();
+const alert = useAlert();
 
 const handleSubmit = (e: FormSubmitEvent<CreateRoomSchema>) => {
   if (!locationPoint.value || !locationBbox.value) {
-    toast.add({
-      title: "Lokasi belum dipilih",
-      description: "Pilih lokasi kos terlebih dahulu",
-      color: "red",
+    alert.error({
+      title: "Gagal",
+      message: "Silahkan pilih lokasi kos",
     });
     return;
   }

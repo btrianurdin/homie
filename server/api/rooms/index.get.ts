@@ -16,7 +16,6 @@ export default defineEventHandler(async (e) => {
         address: true,
         type: true,
         price: true,
-        pricePeriod: true,
         ownerId: true,
         created_at: true,
       },

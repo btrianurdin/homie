@@ -41,14 +41,14 @@ export default defineAppConfig({
     },
     modal: {
       // base: "p-4",
-      transition: {
-        enter: "ease-out duration-300",
-        enterFrom: "opacity-0 translate-y-4 sm:translate-y-80",
-        enterTo: "opacity-100 translate-y-0",
-        leave: "ease-in duration-200",
-        leaveFrom: "opacity-100 translate-y-0",
-        leaveTo: "opacity-0 translate-y-4 sm:translate-y-80",
-      },
+      // transition: {
+      //   enter: "ease-out duration-300",
+      //   enterFrom: "opacity-0 translate-y-4 sm:translate-y-80",
+      //   enterTo: "opacity-100 translate-y-0",
+      //   leave: "ease-in duration-200",
+      //   leaveFrom: "opacity-100 translate-y-0",
+      //   leaveTo: "opacity-0 translate-y-4 sm:translate-y-80",
+      // },
     },
   },
 });

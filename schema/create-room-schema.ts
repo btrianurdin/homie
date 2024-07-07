@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const schema = z.object({
+const createRoomSchema = z.object({
   title: z
     .string({ message: "Kolom tidak boleh kosong" })
     .min(5, { message: "Minimal 5 karakter" }),
@@ -25,7 +25,7 @@ const schema = z.object({
         });
         return z.NEVER;
       }
-      return val.replace(/\D/g, "");
+      return val;
     }),
   period: z.array(z.enum(["month", "3months", "6months", "year"])).min(1, {
     message: "Pilih minimal satu",
@@ -44,9 +44,9 @@ const schema = z.object({
   }),
 });
 
-export type CreateRoomSchema = z.infer<typeof schema> & {
+export type CreateRoomSchema = z.infer<typeof createRoomSchema> & {
   point: mapboxgl.LngLat;
   bbox: number[];
 };
 
-export default schema;
+export default createRoomSchema;
