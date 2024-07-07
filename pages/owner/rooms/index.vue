@@ -8,7 +8,9 @@
         Tambah Kos
       </UButton>
     </div>
-    <div class="h-full flex-grow grid grid-cols-3 items-start gap-3 p-6 overflow-auto">
+    <div
+      class="h-full flex-grow grid grid-cols-3 items-start gap-3 p-6 overflow-auto"
+    >
       <UCard
         v-for="room in roomsQuery.data.value?.payload"
         :key="room.id"
@@ -37,22 +39,30 @@
               <span class="text-lg font-semibold">{{
                 currency(room.price)
               }}</span>
-              <span class="text-sm text-gray-500"
-                >/ {{ PricePeriodLabel[room.pricePeriod] }}</span
-              >
+              <span class="text-sm text-gray-500"> / Bulan</span>
             </div>
           </div>
           <p class="text-sm text-gray-500">{{ room.address }}</p>
         </div>
         <template #footer>
           <div class="grid grid-cols-3 justify-end gap-3">
-            <UButton icon="i-heroicons-eye" color="indigo" variant="outline">
-              Lihat
-            </UButton>
-            <UButton icon="i-heroicons-pencil" variant="outline">
+            <NuxtLink :to="`/room/${room.id}`" target="_blank" class="inline-block">
+              <UButton
+                icon="i-heroicons-eye"
+                color="indigo"
+                class="justify-center w-full"
+              >
+                Lihat
+              </UButton>
+            </NuxtLink>
+            <UButton icon="i-heroicons-pencil" class="justify-center">
               Edit
             </UButton>
-            <UButton icon="i-heroicons-trash" color="red" variant="outline">
+            <UButton
+              icon="i-heroicons-trash"
+              color="red"
+              class="justify-center"
+            >
               Hapus
             </UButton>
           </div>

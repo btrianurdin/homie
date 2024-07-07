@@ -60,7 +60,7 @@
                 currency(room.price)
               }}</span>
               <span class="text-sm text-gray-500">
-                /{{ room.price_period }}
+                / Bulan
               </span>
             </div>
           </div>

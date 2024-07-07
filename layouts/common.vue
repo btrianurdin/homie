@@ -15,7 +15,7 @@
           <h1 class="text-xl font-semibold">Homie</h1>
         </NuxtLink>
         <div class="relative ml-10 flex items-center justify-between w-full">
-          <div class="w-1/2">
+          <div class="w-full md:w-[400px] xl:w-[450px]">
             <UInput
               id="search-input"
               v-model="search"
@@ -25,7 +25,7 @@
             <div
               id="search-box"
               v-if="searchBoxOpen"
-              class="absolute mt-2 w-1/2"
+              class="absolute mt-2 w-full md:w-[400px] xl:w-[450px]"
             >
               <div
                 class="w-full bg-white shadow-md rounded-md border px-4 py-3"
