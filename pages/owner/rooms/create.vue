@@ -49,11 +49,7 @@
         activeTab === 'facility' && 'hidden',
       ]"
     >
-      <GalleryUpload
-        :galleries="galleries"
-        @gallery-added="galleryAddedHandler"
-        @gallery-removed="galleryRemovedHandler"
-      />
+      <GalleryUpload v-model="galleries" />
       <CreateRoomForm @submit="submitHandler" @errorForm="errorFormHandler" />
     </div>
     <div
@@ -75,7 +71,6 @@ import NearestAccess from "~/components/rooms/NearestAccess.vue";
 import useMutation from "~/composables/use-mutation";
 import createRoom from "~/repositories/room/create-room";
 import type { CreateRoomSchema } from "~/schema/create-room-schema";
-import createRoomSchema from "~/schema/create-room-schema";
 
 definePageMeta({
   layout: "owner",
@@ -90,14 +85,6 @@ const alert = useAlert();
 const galleries = ref<{ id: string; url: string }[]>([]);
 const facilities = ref<string[]>([]);
 const nearestAccess = ref<string[]>([]);
-
-const galleryAddedHandler = (data: { id: string; url: string }) => {
-  galleries.value.unshift(data);
-};
-
-const galleryRemovedHandler = (data: { id: string; url: string }) => {
-  galleries.value = galleries.value.filter((gallery) => gallery.id !== data.id);
-};
 
 const createRoomHandler = useMutation(createRoom);
 
@@ -150,7 +137,7 @@ const submitHandler = (data: CreateRoomSchema) => {
       onError: () => {
         alert.error({
           title: "Gagal",
-          message: "Terjadi kesalah saat menambahkan kos"
+          message: "Terjadi kesalah saat menambahkan kos",
         });
       },
     },
