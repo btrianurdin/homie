@@ -14,14 +14,13 @@
     <div
       class="flex flex-col items-center gap-4 text-center justify-center p-6 py-10"
     >
-      <UIcon
-        name="i-heroicons-exclamation-triangle"
-        class="w-20 h-20 text-red-600"
-      />
-      <h3 class="text-red-600 text-3xl font-semibold">{{ $props.title }}</h3>
+      <UIcon name="i-heroicons-check-circle" class="w-20 h-20 text-green-600" />
+      <h3 class="text-green-600 text-3xl font-semibold">
+        {{ $props.title }}
+      </h3>
       <p>{{ $props.message }}</p>
       <div v-if="$props.withButton" class="mt-3">
-        <UButton color="red" size="lg" @click="$emit('close')">
+        <UButton color="green" size="lg" @click="$emit('close')">
           <span> Tutup </span>
         </UButton>
       </div>
