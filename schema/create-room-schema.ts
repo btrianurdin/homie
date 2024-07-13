@@ -46,7 +46,6 @@ const createRoomSchema = z.object({
 
 export type CreateRoomSchema = z.infer<typeof createRoomSchema> & {
   point: mapboxgl.LngLat;
-  bbox: number[];
 };
 
 export default createRoomSchema;
