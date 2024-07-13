@@ -89,9 +89,7 @@
                     <span class="text-lg font-semibold">{{
                       currency(room.price)
                     }}</span>
-                    <span class="text-sm text-gray-500"
-                      >/ {{ PricePeriodLabel[room.pricePeriod] }}</span
-                    >
+                    <span class="text-sm text-gray-500">/ Bulan</span>
                   </div>
                 </div>
                 <p class="text-sm text-gray-500">{{ room.address }}</p>
@@ -108,7 +106,7 @@
 import Footer from "~/components/shared/Footer.vue";
 import cityLists from "~/data/city-lists";
 import getRecommendations from "~/repositories/public/room/get-recommendations";
-import { PricePeriodLabel, RoomTypeLabel } from "~/types";
+import { RoomTypeLabel } from "~/types";
 
 definePageMeta({
   layout: "common",

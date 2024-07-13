@@ -1,4 +1,3 @@
-import { getServerSession } from "#auth";
 import sanitizeHtml from "sanitize-html";
 import { z } from "zod";
 import db from "~/server/database";
@@ -32,12 +31,8 @@ const validations = z.object({
 export default defineEventHandler(async (e) => {
   try {
     const body = await readBody(e);
-    const session = await getServerSession(e);
-
-    if (!session) return HttpResponse.unauthorized(e);
 
     const validate = validations.safeParse(body);
-
     if (!validate.success) {
       return HttpResponse.error(
         e,
@@ -49,7 +44,7 @@ export default defineEventHandler(async (e) => {
 
     const description = sanitizeHtml(body.description);
     const newRoom: InsertRoom = {
-      ownerId: session.user?.id as string,
+      ownerId: e.context.user?.id as string,
       title: body.title,
       description: description,
       price: body.price,

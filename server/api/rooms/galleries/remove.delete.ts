@@ -1,13 +1,22 @@
-import { DeleteObjectCommand, S3 } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { and, eq } from "drizzle-orm";
 import s3Client from "~/server/cloud/s3client";
+import db from "~/server/database";
+import { galleries } from "~/server/database/schema";
 import HttpResponse from "~/server/exceptions/api-response";
 
 export default defineEventHandler(async (e) => {
   try {
-    const { id, imgId } = await readBody(e);
+    const { roomId, id, imgId } = await readBody(e);
 
     if (!imgId) {
       return HttpResponse.badRequest(e, "ID not found");
+    }
+
+    if (roomId && id) {
+      await db
+        .delete(galleries)
+        .where(and(eq(galleries.id, id), eq(galleries.roomId, roomId)));
     }
 
     await s3Client.send(

@@ -85,11 +85,13 @@ const fileChangedHandler = (e: Event) => {
   inputFileRef.value = null;
 };
 
+const route = useRoute();
 const removeMutation = useMutation(removeGallery);
 
 const removeGalleryHandler = ({ id, url }: { id: string; url: string }) => {
   removeMutation.mutate(
     {
+      roomId: route.params?.id as string,
       id: id,
       imgId: url.split("/").pop()!,
     },

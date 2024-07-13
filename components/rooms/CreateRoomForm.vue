@@ -115,7 +115,7 @@ import mapboxgl from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import type { SearchPointResponse } from "~/types";
+import type { OwnerRoomDetailResponse, SearchPointResponse } from "~/types";
 import type { FormSubmitEvent } from "#ui/types";
 import createRoomSchema, {
   type CreateRoomSchema,
@@ -124,6 +124,10 @@ import createRoomSchema, {
 const buttonSubmitRef = ref<HTMLButtonElement | null>(null);
 const formRef = ref<HTMLFormElement | null>(null);
 const config = useRuntimeConfig();
+
+const props = defineProps<{
+  initial?: OwnerRoomDetailResponse;
+}>();
 
 const emits = defineEmits<{
   (e: "submitClick"): void;
@@ -150,18 +154,40 @@ const editor = useEditor({
 
 const searchLocationLoading = ref(false);
 const locationPoint = ref<mapboxgl.LngLat | null>(null);
-const locationBbox = ref<number[] | null>(null);
 const formState = reactive({
   title: "",
   description: "",
   price: "",
-  price_period: "",
-  period: [],
+  period: [] as string[],
   type: "",
   total_rooms: "",
   slots: "",
   address: "",
 });
+
+// initial data for update
+watch(
+  () => props.initial,
+  (value) => {
+    if (value) {
+      formState.title = value.title;
+      formState.description = value.description;
+      formState.price = value.price;
+      formState.period = value.allowBookPeriod?.split(",") as string[];
+      formState.type = value.type;
+      formState.total_rooms = value.roomsTotal.toString();
+      formState.slots = value.roomsAvailable.toString();
+      formState.address = value.address;
+      locationPoint.value = new mapboxgl.LngLat(
+        Number(value.longitude),
+        Number(value.latitude),
+      );
+    }
+  },
+  {
+    deep: true,
+  },
+);
 
 const priceFormat = computed({
   get: () => {
@@ -215,12 +241,28 @@ watch(
     if (location) {
       searchLocationLoading.value = false;
       formState.address = location.value?.payload?.full_address || "";
-      locationBbox.value = location.value?.payload?.bbox || [];
       formRef.value?.validate("address");
     }
   },
   {
     deep: true,
+  },
+);
+
+// add marker when there are location point on initial
+watch(
+  () => props.initial,
+  (data) => {
+    if (data && map.value) {
+      console.log(data);
+      map.value.setCenter([Number(data.longitude), Number(data.latitude)]);
+
+      new mapboxgl.Marker({
+        draggable: false,
+      })
+        .setLngLat([Number(data.longitude), Number(data.latitude)])
+        .addTo(map.value);
+    }
   },
 );
 
@@ -246,15 +288,18 @@ const mapController = () => {
       new mapboxgl.NavigationControl({ showCompass: false }),
     );
 
-    const marker = new mapboxgl.Marker({
-      draggable: true,
-    })
-      .setLngLat([0, 0])
-      .addTo(map.value as mapboxgl.Map);
-
     map.value?.on("click", (e) => {
       searchLocationLoading.value = true;
-      marker.setLngLat([e.lngLat.lng, e.lngLat.lat]);
+      // remove available marker
+      document
+        .querySelectorAll(".mapboxgl-marker")
+        .forEach((el) => el.remove());
+
+      new mapboxgl.Marker({
+        draggable: true,
+      })
+        .setLngLat([e.lngLat.lng, e.lngLat.lat])
+        .addTo(map.value as mapboxgl.Map);
       locationPoint.value = e.lngLat;
     });
   });
@@ -288,7 +333,7 @@ onUnmounted(() => {
 const alert = useAlert();
 
 const handleSubmit = (e: FormSubmitEvent<CreateRoomSchema>) => {
-  if (!locationPoint.value || !locationBbox.value) {
+  if (!locationPoint.value) {
     alert.error({
       title: "Gagal",
       message: "Silahkan pilih lokasi kos",
@@ -300,7 +345,6 @@ const handleSubmit = (e: FormSubmitEvent<CreateRoomSchema>) => {
     ...e.data,
     description: formState.description,
     point: locationPoint.value!,
-    bbox: locationBbox.value!,
   });
 };
 </script>

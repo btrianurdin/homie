@@ -46,7 +46,11 @@
         </div>
         <template #footer>
           <div class="grid grid-cols-3 justify-end gap-3">
-            <NuxtLink :to="`/room/${room.id}`" target="_blank" class="inline-block">
+            <NuxtLink
+              :to="`/room/${room.id}`"
+              target="_blank"
+              class="inline-block"
+            >
               <UButton
                 icon="i-heroicons-eye"
                 color="indigo"
@@ -55,9 +59,11 @@
                 Lihat
               </UButton>
             </NuxtLink>
-            <UButton icon="i-heroicons-pencil" class="justify-center">
-              Edit
-            </UButton>
+            <NuxtLink :to="`/owner/rooms/${room.id}/update`">
+              <UButton icon="i-heroicons-pencil" class="justify-center w-full">
+                Edit
+              </UButton>
+            </NuxtLink>
             <UButton
               icon="i-heroicons-trash"
               color="red"
@@ -73,11 +79,15 @@
 </template>
 <script setup lang="ts">
 import getRooms from "~/repositories/room/get-rooms";
-import { PricePeriodLabel, RoomTypeLabel } from "~/types";
+import { RoomTypeLabel } from "~/types";
 
 definePageMeta({
   layout: "owner",
   middleware: ["auth-owner"],
+});
+
+useHead({
+  title: "Daftar Kos Punyamu",
 });
 
 const roomsQuery = await useLazyAsyncData("rooms", getRooms, {

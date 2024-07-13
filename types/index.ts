@@ -1,4 +1,11 @@
-import { galleries, rooms } from "~/server/database/schema";
+import {
+  facilities,
+  galleries,
+  nearestAccess,
+  roomFacilities,
+  roomNearestAccess,
+  rooms,
+} from "~/server/database/schema";
 
 export type HttpResponse<T> = {
   statusCode: number;
@@ -62,6 +69,12 @@ export type NearestAccessResponse = {
   id: string;
   code: Capitalize<string>;
   title: string;
+};
+
+export type OwnerRoomDetailResponse = typeof rooms.$inferSelect & {
+  galleries: (typeof galleries.$inferSelect)[];
+  roomFacilities: (typeof roomFacilities.$inferSelect)[];
+  roomNearestAccess: (typeof roomNearestAccess.$inferSelect)[];
 };
 
 export type InsertRoom = typeof rooms.$inferInsert;

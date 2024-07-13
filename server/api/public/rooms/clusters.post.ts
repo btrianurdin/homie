@@ -6,14 +6,13 @@ export default defineEventHandler(async (e) => {
   try {
     const { bounds, zoom } = await readBody(e);
 
-    if (!bounds || !zoom) {
+    if (!bounds || !zoom)
       return HttpResponse.badRequest(e, "Bounds and zoom are required.");
-    }
 
     const rooms = await db.query.rooms.findMany({
       where: (rooms, { gte, lte, and, sql }) => {
         return and(
-          // latitude form db is string
+          // get rooms within the bounds
           gte(sql`CAST(${rooms.latitude} AS DECIMAL)`, bounds.south),
           lte(sql`CAST(${rooms.latitude} AS DECIMAL)`, bounds.north),
           gte(sql`CAST(${rooms.longitude} AS DECIMAL)`, bounds.west),
