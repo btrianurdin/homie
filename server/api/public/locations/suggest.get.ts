@@ -33,6 +33,5 @@ export default defineEventHandler(async (e) => {
 
   return HttpResponse.success(e, "Success", {
     locations: features,
-    tes: locations,
   });
 });

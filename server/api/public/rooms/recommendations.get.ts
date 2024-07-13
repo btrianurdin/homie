@@ -9,9 +9,14 @@ export default defineEventHandler(async (e) => {
           limit: 1,
         },
       },
+      limit: 9,
     });
 
-    return HttpResponse.success(e, "Successfully fetched recommendations.", rooms);
+    return HttpResponse.success(
+      e,
+      "Successfully fetched recommendations.",
+      rooms,
+    );
   } catch (error) {
     return HttpResponse.serverError(e, "Internal server error.");
   }

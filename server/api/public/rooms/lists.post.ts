@@ -79,7 +79,6 @@ export default defineEventHandler(async (e) => {
       .map((location) => ({
         id: location.properties.id,
         price: location.properties.price,
-        price_period: location.properties.pricePeriod,
         title: location.properties.title,
         address: location.properties.address,
         rating: location.properties.rating,
