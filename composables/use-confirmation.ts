@@ -7,8 +7,8 @@ export type Confirmation = {
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void | Promise<void>;
-  onSuccess?: () => void;
-  onError?: () => void;
+  onSuccess?: (data: any) => void;
+  onError?: (error: any) => void;
   onCancel?: () => void;
 };
 
@@ -21,24 +21,28 @@ const useConfirmation = () => {
 
       modal.open(ConfirmationDangerModal, {
         title: params?.title ?? "Apakah kamu yakin?",
-        message: params.message ?? "Data yang dihapus tidak dapat dikembalikan.",
+        message:
+          params.message ?? "Data yang dihapus tidak dapat dikembalikan.",
         icon: params.icon ?? "warning",
-        confirmText: params.confirmText ?? "Ya, Hapus",
+        confirmText:
+          params.confirmText ?? params.icon === "trash"
+            ? "Ya, Hapus"
+            : "Ya, Lanjutkan",
         cancelText: params.cancelText ?? "Batal",
         isLoading,
         onConfirm: async () => {
           try {
             isLoading.value = true;
-            await params.onConfirm();
+            const res = await params.onConfirm();
             modal.close();
             // prevent modal opened twice in the same tick
             await delayAsync(300);
-            params?.onSuccess?.();
+            params?.onSuccess?.(res as any);
           } catch (error) {
             modal.close();
             // prevent modal opened twice in the same tick
             await delayAsync(300);
-            params?.onError?.();
+            params?.onError?.(error);
           }
         },
         onCancel: () => {
