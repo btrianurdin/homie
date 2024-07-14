@@ -17,18 +17,14 @@
     </header>
     <div class="flex-grow h-full w-full flex overflow-hidden">
       <div
-        class="w-[260px] z-40 flex-shrink-0 border-r flex flex-col gap-4 bg-white p-6"
+        class="w-[300px] z-40 flex-shrink-0 border-r flex flex-col gap-4 bg-white p-6"
       >
         <NuxtLink
           to="/owner/account"
           class="flex items-center gap-2 rounded-md p-2 transition-colors duration-300 hover:bg-gray-100"
         >
-          <div
-            class="bg-black text-white h-9 w-9 text-sm flex items-center justify-center rounded-full"
-          >
-            ER
-          </div>
-          <p class="">Eko Rudiawan</p>
+          <ProfileLetter :text="userName!" />
+          <p class="">{{ userName }}</p>
         </NuxtLink>
         <div class="h-[1px] bg-gray-200" />
         <template v-for="menu in sidebarMenu" :key="menu.name">
@@ -67,6 +63,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import ProfileLetter from "~/components/shared/ProfileLetter.vue";
+
 const route = useRoute();
 
 const sidebarMenu = ref([
@@ -88,7 +86,9 @@ const activeMenu = (path: string, isIndex: boolean) => {
   return route.path.startsWith(path);
 };
 
-const { signOut } = useAuth();
+const { data, signOut } = useAuth();
+
+const userName = computed(() => data?.value?.user?.name);
 
 const logoutHandler = () => {
   signOut({

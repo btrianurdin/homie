@@ -94,7 +94,7 @@
                 [
                   {
                     label: 'Profile',
-                    to: '/profile',
+                    to: isOwner ? '/owner' : '/profile',
                   },
                 ],
                 [
@@ -107,11 +107,7 @@
               ]"
               :popper="{ placement: 'bottom-start' }"
             >
-              <button
-                class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center"
-              >
-                {{ profileLetter }}
-              </button>
+              <ProfileLetter :text="data?.user?.name!" />
             </UDropdown>
           </div>
         </div>
@@ -127,6 +123,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import ProfileLetter from "~/components/shared/ProfileLetter.vue";
 import cityLists from "~/data/city-lists";
 import locationSuggest from "~/repositories/public/location/location-suggest";
 import type { LocationSuggestResponse } from "~/types";
@@ -150,6 +147,10 @@ const profileLetter = computed(() => {
     return name[0].toUpperCase();
   }
   return "?";
+});
+
+const isOwner = computed(() => {
+  return data.value?.user?.role === "owner";
 });
 
 const openSearchBox = () => {
