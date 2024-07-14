@@ -15,7 +15,6 @@
         v-for="room in roomsQuery.data.value?.payload"
         :key="room.id"
         :ui="{
-          base: '',
           header: { padding: '!p-0' },
           body: { padding: '!p-4' },
           footer: { padding: '!p-4' },
@@ -68,6 +67,7 @@
               icon="i-heroicons-trash"
               color="red"
               class="justify-center"
+              @click="deleteRoomHandler(room.id)"
             >
               Hapus
             </UButton>
@@ -78,6 +78,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import deleteRoom from "~/repositories/room/delete-room";
 import getRooms from "~/repositories/room/get-rooms";
 import { RoomTypeLabel } from "~/types";
 
@@ -93,6 +94,35 @@ useHead({
 const roomsQuery = await useLazyAsyncData("rooms", getRooms, {
   server: false,
 });
+
+const deleteMutation = useMutation(deleteRoom);
+
+const confirmation = useConfirmation();
+const alert = useAlert();
+
+const deleteRoomHandler = (roomId: string) => {
+  confirmation.danger({
+    title: "Hapus Kos",
+    message: "Apakah kamu yakin ingin menghapus kos ini?",
+    icon: "trash",
+    onConfirm: async () => {
+      await deleteMutation.mutateAsync(roomId);
+    },
+    onSuccess: () => {
+      roomsQuery.refresh();
+      alert.success({
+        title: "Berhasil menghapus kos",
+        message: "Kos berhasil dihapus",
+      });
+    },
+    onError: (error: any) => {
+      alert.error({
+        title: "Gagal menghapus kos",
+        message: error.message || "Terjadi kesalahan saat menghapus kos",
+      });
+    },
+  });
+};
 </script>
 <style scoped>
 .two-lines {
