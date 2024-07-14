@@ -27,7 +27,32 @@ const useMutation = <TData, TResult>(
       });
   };
 
-  return { loading: _loading, error: _error, variable: _variable, mutate };
+  const mutateAsync = async (
+    payload: TData,
+    opts?: UseMutationOptions<TResult>,
+  ): Promise<void> => {
+    _loading.value = true;
+    _variable.value = payload as any;
+
+    try {
+      const res = await fn(payload);
+      opts?.onSuccess && opts.onSuccess(res);
+    } catch (error) {
+      _error.value = error;
+      opts?.onError && opts.onError(error);
+      throw error;
+    } finally {
+      _loading.value = false;
+    }
+  };
+
+  return {
+    loading: _loading,
+    error: _error,
+    variable: _variable,
+    mutate,
+    mutateAsync,
+  };
 };
 
 export default useMutation;
