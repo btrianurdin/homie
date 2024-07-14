@@ -1,8 +1,5 @@
 <template>
   <Suspense>
-    <template #fallback>
-      <div>loading..</div>
-    </template>
     <div class="bg-white">
       <div class="max-w-screen-lg w-full mx-auto mb-5 pt-10">
         <UBreadcrumb
@@ -92,22 +89,32 @@
             <div class="[&_p]:mb-2" v-html="details?.description"></div>
           </div>
           <div class="pb-8 border-b">
-            <h2 class="text-2xl font-medium mb-2">Fasilitas</h2>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Doloremque totam optio, iure temporibus, voluptate expedita
-              officia accusamus porro laudantium provident atque quam doloribus
-              eveniet, omnis cumque ullam nihil fugit dolor.
-            </p>
+            <h2 class="text-2xl font-medium mb-5">Fasilitas</h2>
+            <div class="flex flex-wrap gap-10">
+              <div v-for="facility in details?.facilities" class="flex gap-3">
+                <HomiIcon
+                  :name="
+                    facilitiesIcons[facility.code as Capitalize<string>].icon
+                  "
+                  class="w-8 h-8"
+                />
+                <p class="text-lg">{{ facility.title }}</p>
+              </div>
+            </div>
           </div>
           <div class="pb-8 border-b">
-            <h2 class="text-2xl font-medium mb-2">Akses Terdekat</h2>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Doloremque totam optio, iure temporibus, voluptate expedita
-              officia accusamus porro laudantium provident atque quam doloribus
-              eveniet, omnis cumque ullam nihil fugit dolor.
-            </p>
+            <h2 class="text-2xl font-medium mb-5">Akses Terdekat</h2>
+            <div class="flex flex-wrap gap-10">
+              <div v-for="access in details?.nearestAccess" class="flex gap-3">
+                <HomiIcon
+                  :name="
+                    nearestAccessIcons[access.code as Capitalize<string>].icon
+                  "
+                  class="w-8 h-8"
+                />
+                <p class="text-lg">{{ access.title }}</p>
+              </div>
+            </div>
           </div>
           <div class="border-b pb-8">
             <h2 class="text-2xl font-medium mb-3">Peta Lokasi</h2>
@@ -209,7 +216,12 @@ import GalleryModal from "~/components/rooms/GalleryModal.vue";
 import RoomLocationMap from "~/components/rooms/RoomLocationMap.vue";
 import Footer from "~/components/shared/Footer.vue";
 import DatePicker from "~/components/ui/DatePicker.vue";
+import HomiIcon from "~/components/ui/HomiIcon.vue";
+import facilitiesIcons from "~/constants/facilities-icons";
+import nearestAccessIcons from "~/constants/nearest-access-icons";
+import homiIconCollections from "~/data/homi-icon-collections";
 import getRoomDetail from "~/repositories/public/room/get-room-detail";
+import { nearestAccess } from "~/server/database/schema";
 import {
   AllowPeriodLabel,
   PeriodInNumber,
@@ -252,6 +264,7 @@ const detailsQuery = useAsyncData("details", () =>
   getRoomDetail(roomId.value!),
 );
 const details = computed(() => detailsQuery.data.value?.payload);
+
 const addressRegion = computed(() => {
   const address = details?.value?.address?.split(",");
   return `${address?.[3]},${address?.[4]}`;

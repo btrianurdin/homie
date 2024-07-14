@@ -20,7 +20,7 @@
         class="w-[260px] z-40 flex-shrink-0 border-r flex flex-col gap-4 bg-white p-6"
       >
         <NuxtLink
-          to="/owmer/account"
+          to="/owner/account"
           class="flex items-center gap-2 rounded-md p-2 transition-colors duration-300 hover:bg-gray-100"
         >
           <div

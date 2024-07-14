@@ -51,6 +51,9 @@ export type RoomListResponse = {
 };
 
 export type RoomDetailResponse = GetRoom & {
+  facilities: GetFacilities[];
+  nearestAccess: GetNearestAccess[];
+} & {
   owner: {
     name: string;
     phone: string;
@@ -82,6 +85,8 @@ export type GetGallery = typeof galleries.$inferSelect;
 export type GetRoom = typeof rooms.$inferSelect & {
   galleries: GetGallery[];
 };
+export type GetFacilities = typeof facilities.$inferSelect;
+export type GetNearestAccess = typeof nearestAccess.$inferSelect;
 
 export const RoomTypeLabel = {
   men: "Putra",
