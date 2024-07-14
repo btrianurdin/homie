@@ -9,6 +9,16 @@
       </UButton>
     </div>
     <div
+      v-if="isArrayEmpty(roomsQuery.data.value?.payload)"
+      class="flex flex-col gap-4 items-center justify-center h-full w-full"
+    >
+      <p class="text-gray-500 text-lg">Kamu belum memiliki properti kos</p>
+      <UButton to="/owner/rooms/create" class="" icon="i-heroicons-plus">
+        Tambah Kos
+      </UButton>
+    </div>
+    <div
+      v-else
       class="h-full flex-grow grid grid-cols-3 items-start gap-3 p-6 overflow-auto"
     >
       <UCard
