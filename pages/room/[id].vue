@@ -219,9 +219,7 @@ import DatePicker from "~/components/ui/DatePicker.vue";
 import HomiIcon from "~/components/ui/HomiIcon.vue";
 import facilitiesIcons from "~/constants/facilities-icons";
 import nearestAccessIcons from "~/constants/nearest-access-icons";
-import homiIconCollections from "~/data/homi-icon-collections";
 import getRoomDetail from "~/repositories/public/room/get-room-detail";
-import { nearestAccess } from "~/server/database/schema";
 import {
   AllowPeriodLabel,
   PeriodInNumber,
@@ -260,10 +258,14 @@ const priceSummary = computed(() => {
   };
 });
 
-const detailsQuery = useAsyncData("details", () =>
+const detailsQuery = await useAsyncData(`details:${roomId}`, () =>
   getRoomDetail(roomId.value!),
 );
 const details = computed(() => detailsQuery.data.value?.payload);
+
+useHead({
+  title: details?.value?.title,
+});
 
 const addressRegion = computed(() => {
   const address = details?.value?.address?.split(",");

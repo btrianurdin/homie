@@ -35,7 +35,10 @@
               :items="cityLists"
               :ui="{ item: 'snap-start' }"
             >
-              <NuxtLink to="/" class="relative w-[200px] h-[200px] px-1.5">
+              <button
+                class="relative w-[200px] h-[200px] px-1.5"
+                @click="cityClickHandler(item)"
+              >
                 <img
                   :src="item.image"
                   class="w-full h-full rounded-md object-cover"
@@ -49,7 +52,7 @@
                 >
                   {{ item.name }}
                 </p>
-              </NuxtLink>
+              </button>
             </UCarousel>
           </div>
         </div>
@@ -59,42 +62,44 @@
             Temukan kos-kosan yang nyaman dan terjangkau di sekitar kamu.
           </p>
           <div class="grid grid-cols-3 gap-6">
-            <UCard
-              v-for="room in recommendationLists.data.value?.payload"
-              :key="room.id"
-              :ui="{
-                base: '',
-                header: { padding: '!p-0' },
-                body: { padding: '!p-4' },
-                footer: { padding: '!p-4' },
-              }"
-            >
-              <template #header>
-                <img
-                  :src="room.galleries[0].image"
-                  class="w-full h-[200px] object-cover object-center rounded-t-md"
-                />
-              </template>
-              <div class="h-14 flex items-center mb-2">
-                <h3 class="text-lg font-medium two-lines">
-                  {{ room.title }}
-                </h3>
-              </div>
-              <div>
-                <div class="flex justify-between mb-3">
-                  <div class="py-1 px-3 text-sm rounded-md bg-gray-200">
-                    {{ RoomTypeLabel[room.type] }}
+            <template v-for="room in recommendationLists.data.value?.payload">
+              <NuxtLink :to="`/room/${room.id}`">
+                <UCard
+                  :ui="{
+                    base: '',
+                    header: { padding: '!p-0' },
+                    body: { padding: '!p-4' },
+                    footer: { padding: '!p-4' },
+                  }"
+                >
+                  <template #header>
+                    <img
+                      :src="room.galleries[0].image"
+                      class="w-full h-[200px] object-cover object-center rounded-t-md"
+                    />
+                  </template>
+                  <div class="h-14 flex items-center mb-2">
+                    <h3 class="text-lg font-medium two-lines">
+                      {{ room.title }}
+                    </h3>
                   </div>
                   <div>
-                    <span class="text-lg font-semibold">{{
-                      currency(room.price)
-                    }}</span>
-                    <span class="text-sm text-gray-500">/ Bulan</span>
+                    <div class="flex justify-between mb-3">
+                      <div class="py-1 px-3 text-sm rounded-md bg-gray-200">
+                        {{ RoomTypeLabel[room.type] }}
+                      </div>
+                      <div>
+                        <span class="text-lg font-semibold">
+                          {{ currency(room.price) }}
+                        </span>
+                        <span class="text-sm text-gray-500">/Bulan</span>
+                      </div>
+                    </div>
+                    <p class="text-sm text-gray-500">{{ room.address }}</p>
                   </div>
-                </div>
-                <p class="text-sm text-gray-500">{{ room.address }}</p>
-              </div>
-            </UCard>
+                </UCard>
+              </NuxtLink>
+            </template>
           </div>
         </div>
       </div>
@@ -122,5 +127,22 @@ const actionClickHandler = () => {
   ) as HTMLInputElement;
 
   searchInput.focus();
+};
+
+const router = useRouter();
+
+type City = (typeof cityLists)[0];
+const cityClickHandler = (city: City) => {
+  const data = {
+    type: "city",
+    city_name: city.name,
+    coordinates: city.coordinates,
+  };
+
+
+  router.push({
+    name: "search",
+    query: { q: btoa(JSON.stringify(data)) },
+  });
 };
 </script>

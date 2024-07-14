@@ -41,8 +41,9 @@
                   <p class="text-sm font-medium mb-2">Banyak dicari</p>
                   <div class="grid grid-cols-3 gap-3">
                     <button
-                      v-for="city in citiesCover"
+                      v-for="city in cities"
                       class="relative rounded-md overflow-hidden"
+                      @click="cityClickHandler(city)"
                     >
                       <img
                         :src="city.image"
@@ -126,6 +127,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import cityLists from "~/data/city-lists";
 import locationSuggest from "~/repositories/public/location/location-suggest";
 import type { LocationSuggestResponse } from "~/types";
 
@@ -179,6 +181,22 @@ const nearestSearchHandler = () => {
   };
 
   searchBoxOpen.value = false;
+  router.push({
+    name: "search",
+    query: { q: btoa(JSON.stringify(data)) },
+  });
+};
+
+type City = (typeof cityLists)[0];
+const cityClickHandler = (city: City) => {
+  const data = {
+    type: "city",
+    city_name: city.name,
+    coordinates: city.coordinates,
+  };
+
+  searchBoxOpen.value = false;
+  search.value = city.name;
   router.push({
     name: "search",
     query: { q: btoa(JSON.stringify(data)) },
@@ -239,23 +257,7 @@ onUnmounted(() => {
   if (interval.value) clearInterval(interval.value);
 });
 
-const citiesCover = [
-  {
-    id: "jakarta",
-    name: "Jakarta",
-    image: "https://educaly.s3.amazonaws.com/assets/jakarta-cover.webp",
-  },
-  {
-    id: "bandunng",
-    name: "Bandung",
-    image: "https://educaly.s3.amazonaws.com/assets/bandung-cover.webp",
-  },
-  {
-    id: "surabaya",
-    name: "Surabaya",
-    image: "https://educaly.s3.amazonaws.com/assets/surabaya-cover.webp",
-  },
-];
+const cities = computed(() => cityLists.slice(0, 3));
 
 const searchPlaceholderText = [
   "Cari kos di Jakarta",

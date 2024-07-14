@@ -6,9 +6,9 @@
           <h1 class="text-2xl font-semibold">
             Pencarian kos di
             {{
-              searchParams.type === "place"
-                ? searchParams.city_name
-                : "sekitar anda"
+              searchParams.type === "nearest"
+                ? "sekitar anda"
+                : searchParams.city_name
             }}
           </h1>
           <p class="text-gray-500 text-sm">
@@ -59,9 +59,7 @@
               <span class="text-xl font-semibold">{{
                 currency(room.price)
               }}</span>
-              <span class="text-sm text-gray-500">
-                / Bulan
-              </span>
+              <span class="text-sm text-gray-500">/Bulan</span>
             </div>
           </div>
         </NuxtLink>
@@ -96,7 +94,7 @@ type SearchParams = {
   bbox?: number[];
   city_name?: string;
   coordinates?: number[];
-  type: "place" | "nearest";
+  type: "place" | "nearest" | "city";
 };
 
 const searchParams = computed(() => {

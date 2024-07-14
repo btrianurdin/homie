@@ -44,11 +44,11 @@
 </template>
 <script setup lang="ts">
 import mapboxgl, { type MapboxOptions } from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
 import getClusters from "~/repositories/public/room/get-clusters";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 const props = defineProps<{
-  type: "place" | "nearest";
+  type: "place" | "nearest" | "city";
   coordinates?: number[];
   bbox?: number[];
 }>();
@@ -113,6 +113,8 @@ const updateCluster = async () => {
   const bounds = map.value?.getBounds();
   const zoom = map.value?.getZoom();
 
+  console.log("updated cluster");
+
   emits("clusterUpdate", {
     bounds: bounds?.toArray()!,
     zoom: zoom!,
@@ -134,21 +136,21 @@ const updateCluster = async () => {
       el.id = cluster.cluster_id!;
       el.className += " marker-cluster";
       el.innerHTML = `<span>${cluster.point_count}</span>`;
+
+      el.addEventListener("click", () => {
+        activeClusterId.value = null;
+        emits("clusterClick", {
+          bounds: bounds?.toArray()!,
+          zoom: zoom!,
+          cluster_id: cluster.cluster_id!,
+        });
+
+        activeClusterId.value = cluster.cluster_id!;
+      });
     } else {
       el.className += " marker-single";
       el.innerHTML = `<span>${rupiahReadable(cluster.price!)}</span>`;
     }
-    el.addEventListener("click", () => {
-      activeClusterId.value = null;
-      emits("clusterClick", {
-        bounds: bounds?.toArray()!,
-        zoom: zoom!,
-        cluster_id: cluster.cluster_id!,
-      });
-      if (cluster.is_cluster) {
-        activeClusterId.value = cluster.cluster_id!;
-      }
-    });
 
     new mapboxgl.Marker(el)
       .setLngLat([cluster.coordinates[0], cluster.coordinates[1]])
@@ -168,13 +170,16 @@ watch(activeClusterId, (id) => {
   }
 });
 
-onMounted(() => {
-  loading.map = true;
+const initMap = () => {
   if (props.type === "place") {
     createMap(props.coordinates!, props.bbox);
   }
+  if (props.type === "city") {
+    createMap([props.coordinates![0], props.coordinates![1]], undefined, 13);
+  }
   if (props.type === "nearest") {
     navigator.geolocation.getCurrentPosition((position) => {
+      console.log("position", position);
       createMap(
         [position.coords.longitude, position.coords.latitude],
         undefined,
@@ -182,25 +187,46 @@ onMounted(() => {
       );
     });
   }
+};
+
+onMounted(() => {
+  loading.map = true;
+  initMap();
 });
 
+/**
+ * When the type changed from any search to nearest/gps
+ */
 watch(
-  () => props?.bbox,
-  (bbox) => {
-    console.log(bbox);
-    if (map.value && bbox) {
-      map.value.fitBounds(
-        [
-          [bbox[0], bbox[1]],
-          [bbox[2], bbox[3]],
-        ],
-        {
-          speed: 0.5,
-        },
-      );
-    }
+  () => props.type,
+  (type) => {
+    if (map.value && type === "nearest") initMap();
+  },
+  {
+    immediate: false,
   },
 );
+
+/**
+ * When the bbox is updated, fit the map to the bbox
+ */
+watch([() => props?.bbox, () => props?.coordinates], ([bbox, coordinates]) => {
+  if (map.value) {
+    // when user click city cuggestion
+    if (bbox) {
+      map.value.fitBounds([
+        [bbox[0], bbox[1]],
+        [bbox[2], bbox[3]],
+      ]);
+    }
+    // when user click city box
+    if (coordinates && !bbox) {
+      console.log("coordinates", coordinates);
+      map.value.setCenter([coordinates?.[0], coordinates?.[1]]);
+      updateCluster();
+    }
+  }
+});
 </script>
 <style lang="postcss">
 .marker.marker-cluster {
